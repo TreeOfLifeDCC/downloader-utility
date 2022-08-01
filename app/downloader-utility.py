@@ -31,9 +31,8 @@ class NeoFourJ:
 
 
 def download_filea(url, filename, directory, download_location):
-    print(url)
     abs_path = create_directory(url, filename, directory, download_location)
-    print(abs_path)
+
     with requests.get(url, stream=True) as r, open(abs_path, "wb") as f:
         print('Download Started !! ' + url)
         for chunk in r.iter_content(chunk_size=1024):
@@ -132,7 +131,7 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
                         url = "https://www.ebi.ac.uk/ena/browser/api/fasta/" + assemblies.get("accession") + "?download" \
                                                                                                              "=true&gzip" \
                                                                                                              "=true "
-                        print(url)
+
                         download_filea(url, assemblies.get("accession") + '.' + assemblies.get("version") + '.fasta.gz',
                                        'assemblies', download_location)
             print('Downloading Completed ...!!!')

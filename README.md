@@ -34,7 +34,7 @@ python  app/downloader-utility.py ---phylogeny "Dikarya"   --data_status “Mapp
     
   Run docker image by providing parameters:
   
-    docker run downloader-utility:latest  --phylogeny Amphipyrinae  --experiment_type "Hi-C - Arima v1" --download_option annotations
+    docker run --rm -v "$PWD/download_location:/code/app/annotations" downloader-utility:latest  --phylogeny Amphipyrinae  --experiment_type "Hi-C - Arima v1" --download_option annotations
 Note: 
 
-Using docker image data is downloaded into the container and you need to copy data from outside the container.
+Using docker image data is downloaded into download_location e.g /Users/downloads.
