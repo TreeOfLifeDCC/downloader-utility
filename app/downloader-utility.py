@@ -119,11 +119,10 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
                       '"' + experiment_type + '"' '}}]}}}}'
 
     query_param = query_param + '] }}}'
-    print(query_param)
+    # print(query_param)
     data_portal = es.search(index="data_portal", size=10000, body=query_param)
-    print(len(data_portal['hits']['hits']))
-    print(len(data_portal['hits']['hits']) > 0)
     if len(data_portal['hits']['hits']) > 0:
+        print(download_option)
         if download_option == 'assemblies':
             for organism in data_portal['hits']['hits']:
                 if organism.get('_source').get("assemblies"):
@@ -158,7 +157,25 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
                             url_transcripts = annotationObj.get('transcripts').get('FASTA')
                             download_filea(url_transcripts, url_transcripts.split('/')[-1],
                                            'annotations/transcripts', download_location)
-
+        elif download_option == 'experiments':
+            for organism in data_portal['hits']['hits']:
+                if organism.get('_source').get("experiment"):
+                    for experiment in organism.get('_source').get("experiment"):
+                        if experiment.get('sra-ftp'):
+                            url_sra_ftp = experiment.get('sra-ftp')
+                            download_filea('http://'+url_sra_ftp, url_sra_ftp.split('/')[-1],
+                                           'experiments/sraFtp', download_location)
+                        if experiment.get('submitted_ftp'):
+                            url_submitted_ftp = experiment.get('submitted_ftp')
+                            download_filea('http://'+url_submitted_ftp, url_submitted_ftp.split('/')[-1],
+                                           'experiments/submittedFtp', download_location)
+                        if experiment.get('fastq_ftp'):
+                            fastq_ftplist = experiment.get('fastq_ftp').split(';')
+                            if fastq_ftplist:
+                                for fastq in fastq_ftplist:
+                                    url_fastq_ftp = fastq
+                                    download_filea('http://'+url_fastq_ftp, url_fastq_ftp.split('/')[-1],
+                                                   'experiments/fastqFtp', download_location)
             print('Downloading Completed ...!!!')
 
     else:
