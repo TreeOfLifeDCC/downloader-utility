@@ -21,7 +21,7 @@ python  app/downloader-utility.py ---phylogeny "Dikarya"   --data_status “Mapp
 * `--data_status` (Optional) The filter of data status for the download (`eg : Biosamples - Submitted,Mapped Reads - Submitted,Assemblies - Submitted,Raw Data - Submitted,Annotation Complete - Done,Genome Notes - Submitted`)
 * `--experiment_type` (Optional) The filter of experiment type (`eg : PacBio - HiFi,Hi-C - Arima v2,Hi-C - Arima v1`)
 * `--download_location` (Optional) The location for the download
-* `--download_option` (Required) The type of data(`annotations,assemblies`) that you want to download.
+* `--download_option` (Required) The type of data(`annotations,assemblies,experiments`) that you want to download.
 
 
 # 2. Build Docker Image: 
@@ -37,4 +37,4 @@ python  app/downloader-utility.py ---phylogeny "Dikarya"   --data_status “Mapp
     docker run --rm -v "$PWD/download_location:/code/app/download_option" downloader-utility:latest  --phylogeny Amphipyrinae  --experiment_type "Hi-C - Arima v1" --download_option annotations
 Note: 
 
-Using docker image data is downloaded into download_location e.g /Users/downloads and download_option is (`annotations,assemblies`).
+Using docker image data is downloaded into download_location e.g /Users/downloads and download_option is (`annotations,assemblies,experiments`).
