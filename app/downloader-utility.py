@@ -37,23 +37,7 @@ def download_filea(url, filename, directory, download_location):
         print('Download Started !! ' + url)
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
-    # print('Download Started !!'+ url)
-    # with open(abs_path, 'wb') as f:
-    #     response = requests.get(url, stream=True)
-    #     total = response.headers.get('content-length')
-    # 
-    #     if total is None:
-    #         f.write(response.content)
-    #     else:
-    #         downloaded = 0
-    #         total = int(total)
-    #         for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
-    #             downloaded += len(data)
-    #             f.write(data)
-    #             done = int(50 * downloaded / total)
-    #             sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50 - done)))
-    #             sys.stdout.flush()
-    # sys.stdout.write('\n')
+
 
 
 def create_directory(url, filename, directory, parent_dir):
@@ -119,10 +103,10 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
                       '"' + experiment_type + '"' '}}]}}}}'
 
     query_param = query_param + '] }}}'
-    # print(query_param)
+
     data_portal = es.search(index="data_portal", size=10000, body=query_param)
     if len(data_portal['hits']['hits']) > 0:
-        print(download_option)
+
         if download_option == 'assemblies':
             for organism in data_portal['hits']['hits']:
                 if organism.get('_source').get("assemblies"):
@@ -193,7 +177,7 @@ if __name__ == "__main__":
     parser.add_argument("--download_option")
     args = parser.parse_args()
     config = vars(args)
-    print(config["download_option"])
+    # print(config["download_option"])
     warnings.filterwarnings(action='ignore')
     if config["phylogeny"] is None or config["phylogeny"] == '':
         print('Please provide phylogeny parameter it is required !!')
