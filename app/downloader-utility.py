@@ -113,7 +113,7 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
         elif split_array and split_array[0].strip() == 'Genome Notes':
             query_param = query_param + ',{ "nested": {"path": "genome_notes","query": {"bool": {"must": [{"exists": ' \
                                         '{"field": "genome_notes.url"}}]}}}} '
-    if experiment_type != '':
+    if experiment_type != '' and experiment_type is not None:
         query_param = query_param + ',{ "nested" : { "path": "experiment", "query" : { "bool" : { "must" : [' \
                                     '{ "term" : { "experiment.library_construction_protocol.keyword" : ' + \
                       '"' + experiment_type + '"' '}}]}}}}'
