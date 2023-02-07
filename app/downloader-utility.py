@@ -80,15 +80,15 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
         split_array = data_status.split("-")
         if split_array and split_array[0].strip() == 'Biosamples':
             query_param = query_param + ',{ "terms" : { "biosamples" : [''"' + split_array[1].strip() + '"'']}}'
-        elif split_array and split_array[0].strip() == 'Raw data':
+        elif split_array and split_array[0].strip() == 'Raw Data':
             query_param = query_param + ',{ "terms" : { "raw_data" : [''"' + split_array[1].strip() + '"'']}}'
-        elif split_array and split_array[0].strip() == 'Mapped reads':
+        elif split_array and split_array[0].strip() == 'Mapped Reads':
             query_param = query_param + ',{ "terms" : { "mapped_reads" : [''"' + split_array[
                 1].strip() + '"'']}}'
         elif split_array and split_array[0].strip() == 'Assemblies':
             query_param = query_param + ',{ "terms" : { "assemblies_status" : [''"' + split_array[
                 1].strip() + '"'']}}'
-        elif split_array and split_array[0].strip() == 'Annotation complete':
+        elif split_array and split_array[0].strip() == 'Annotation Complete':
             query_param = query_param + ',{ "terms" : { "annotation_complete" : [''"' + split_array[
                 1].strip() + '"'']}}'
         elif split_array and split_array[0].strip() == 'Annotation':

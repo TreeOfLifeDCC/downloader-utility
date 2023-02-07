@@ -18,7 +18,7 @@ There are two ways to run the tool :
 python  app/downloader-utility.py ---phylogeny "Dikarya"   --data_status “Mapped reads - Done”  --experiment_type “Chromium genome”  --download_location "/Users/raheela/Documents" --download_option "assemblies"
 
 * `--phylogeny` (Required) The name of the Taxnomy for the download (`eg : Dikarya`)
-* `--data_status` (Optional) The filter of data status for the download (`eg : Biosamples - Submitted,Mapped Reads - Submitted,Assemblies - Submitted,Raw Data - Submitted,Annotation Complete - Done,Genome Notes - Submitted`)
+* `--data_status` (Optional) The filter of data status for the download (`eg : Biosamples - Done, Raw Data - Done, Assemblies - Done, Annotation Complete - Done, Genome Notes - Done`)
 * `--experiment_type` (Optional) The filter of experiment type (`eg : PacBio - HiFi,Hi-C - Arima v2,Hi-C - Arima v1`)
 * `--download_location` (Optional) The location for the download
 * `--download_option` (Required) The type of data(`annotations,assemblies,experiments`) that you want to download.
