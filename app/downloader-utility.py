@@ -38,7 +38,8 @@ def main(taxonomyFilter, data_status, experiment_type, download_option, download
         download_location = pathlib.Path(__file__).parent.resolve()
 
     data_portal = requests.get(
-        "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter=" + taxonomyFilter + "&data_status=" + data_status + "&experiment_type=" + experiment_type).json()
+        "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter=" + taxonomyFilter
+        + "&data_status=" + data_status + "&experiment_type=" + experiment_type).json()
 
     if len(data_portal) > 0:
         if download_option == 'assemblies':
