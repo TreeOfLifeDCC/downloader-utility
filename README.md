@@ -24,7 +24,7 @@ python  app/downloader-utility.py ---phylogeny "Chordata"   --data_status "Mappe
 * `--download_option` (Required) The type of data(`annotations,assemblies,experiments`) that you want to download.
 * `--species_list` (Optional/Required) The List of species that you want to download.
 
-`Note:` phylogeny and species_list both are not optional you need to must provide one of them.
+`Note:` phylogeny and species_list both parameters are not optional you need to must provide one of them.
 
 # 2. Build Docker Image: 
  Requirement:

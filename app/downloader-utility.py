@@ -66,12 +66,9 @@ def main(species_list, taxonomy_filter, data_status, experiment_type, download_o
                         download_list.append(
                             [url, assemblies.get("accession") + '.' + assemblies.get("version") + '.fasta.gz',
                              'assemblies', download_location])
-            print('Downloading Completed ...!!!')
         elif download_option == 'annotations':
-
             for organism in data_portal:
                 if organism.get('_source').get("annotation"):
-
                     for annotationObj in organism.get('_source').get("annotation"):
                         if annotationObj.get('annotation'):
                             urlGFT = annotationObj.get('annotation').get('GTF')
@@ -116,7 +113,6 @@ def main(species_list, taxonomy_filter, data_status, experiment_type, download_o
                                     download_list.append(
                                         ['http://' + url_fastq_ftp, url_fastq_ftp.split('/')[-1],
                                          'experiments/fastqFtp', download_location])
-
         if len(download_list):
             print(f"Downloading {len(download_list)}  files...\n")
             downloader(download_list, processes)
