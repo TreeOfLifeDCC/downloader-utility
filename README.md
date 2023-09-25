@@ -8,7 +8,7 @@ There are two ways to run the tool :
    Requirement:
    
       Python installed:
-      Run requirnment.txt using command pip install -r requirnment.txt
+      Run requirnment.txt using command pip install -r requirements.txt
     
   Run script using command:
     
