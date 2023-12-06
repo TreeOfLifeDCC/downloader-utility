@@ -41,7 +41,7 @@ def downloader(download_list, processes):
 
 def main(species_list, taxonomy_filter, data_status, experiment_type, download_option, download_location, processes):
     if (download_location == '' or download_location is None) or os.path.exists(download_location) == False:
-        print('location is not valid using default location')
+        print('using default download location')
         download_location = pathlib.Path(__file__).parent.resolve()
     if species_list is not None and species_list != '':
 
@@ -49,9 +49,22 @@ def main(species_list, taxonomy_filter, data_status, experiment_type, download_o
             "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data_with_species"
             "/?species_list=" + species_list).json()
     else:
-        data_portal = requests.get(
-            "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter=" + taxonomy_filter
-            + "&data_status=" + data_status + "&experiment_type=" + experiment_type).json()
+        if data_status and not experiment_type:
+            data_portal = requests.get(
+                "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter="
+                + taxonomy_filter + "&data_status=" + data_status + "&experiment_type=").json()
+        elif not data_status and experiment_type:
+            data_portal = requests.get(
+                "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter="
+                + taxonomy_filter + "&experiment_type=" + experiment_type + "&data_status=").json()
+        elif not data_status and not experiment_type:
+            data_portal = requests.get(
+                "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter="
+                + taxonomy_filter+ "&experiment_type=" + "&data_status=").json()
+        else:
+            data_portal = requests.get(
+                "https://portal.darwintreeoflife.org/statuses_update/downloader_utility_data/?taxonomy_filter="
+                + taxonomy_filter + "&data_status=" + data_status + "&experiment_type=" + experiment_type).json()
 
     if len(data_portal) > 0:
         download_list = []
@@ -63,9 +76,13 @@ def main(species_list, taxonomy_filter, data_status, experiment_type, download_o
                                                                                                              "=true" \
                                                                                                              "&gzip" \
                                                                                                              "=true "
-                        download_list.append(
-                            [url, assemblies.get("accession") + '.' + assemblies.get("version") + '.fasta.gz',
-                             'assemblies', download_location])
+                        if assemblies.get("version"):
+                            download_list.append(
+                                [url, assemblies.get("accession") + '.' + assemblies.get("version") + '.fasta.gz',
+                                 'assemblies', download_location])
+                        else:
+                            download_list.append(
+                                [url, assemblies.get("accession") + '.fasta.gz', 'assemblies', download_location])
         elif download_option == 'annotations':
             for organism in data_portal:
                 if organism.get('_source').get("annotation"):
