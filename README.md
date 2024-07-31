@@ -8,14 +8,15 @@ There are two ways to run the tool :
    Requirement:
    
       Python installed:
-      Install required libraries using command pip install -r requirements.txt
+      Install required libraries using command pip install -r requirement.txt
     
   Run script using command:
     
-    python  app/downloader-utility.py --phylogeny "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  --download_location "/Users/raheela/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
+    python  app/downloader-utility.py --phylogeny "Chordata" --project_name "DToL"  --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  --download_location "/Users/raheela/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
 
 
-python  app/downloader-utility.py ---phylogeny "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  --download_location "/Users/raheela/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
+python  app/downloader-utility.py --project_name "DToL" ---phylogeny 
+"Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  --download_location "/Users/raheela/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
 
 * `--project_name` (Required): The name of the project (e.g., DToL, ERGA, 25 
 genomes, Canadian BioGenome Project (CBP)).
