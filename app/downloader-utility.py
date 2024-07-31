@@ -11,17 +11,28 @@ ena_url_download_fastq_file = 'https://www.ebi.ac.uk/ena/browser/api/fasta'
 portal_url_to_get_data = 'https://portal.erga-biodiversity.eu/api'
 
 
-def download_file(url, filename, directory):
-    """Download file using url in the specified location"""
-    abs_path = create_directory(url, filename, directory)
+def download_file(url, filename, directory, download_location):
+    """Download file using url in the specified location
+   :param url:
+   :param filename:
+   :param directory:
+   :param download_location:
+   """
+    abs_path = create_directory(filename, directory, download_location)
     with requests.get(url, stream=True) as r, open(abs_path, "wb") as f:
-        print(f'Download Started !! {url}')
+        print('Download Started !! ' + url)
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
 
 
 def create_directory(filename, directory, parent_dir):
-    """Create directory with provided path and file name."""
+    """Download file using url in the specified location
+
+     Keyword arguments:
+     filename -- The name of the File
+     directory -- Directory name which you want to create
+     parent_dir --  The parent directory where you want to create
+    """
     path = os.path.join(parent_dir, directory)
     try:
         os.makedirs(path, exist_ok=True)
@@ -34,8 +45,12 @@ def create_directory(filename, directory, parent_dir):
     return local_filename
 
 
-def downloader(download_list, processes):
-    """Download data using multiprocessing."""
+def downloader(download_list, processes, download_location):
+    """Download data using multiprocessing.
+     :param download_list:,
+     :param processes,
+     :param download_location
+    """
     cpus = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(cpus if cpus < processes else processes)
     for url, filename, directory, download_location in download_list:
@@ -47,7 +62,8 @@ def downloader(download_list, processes):
 
 
 def convert_project_name(project_name: str) -> str:
-    """Convert project name to a standardized format."""
+    """Convert project name to a standardized format.
+     project_name -- Name of the project"""
     return 'dtol' if project_name == 'DToL' else project_name
 
 
@@ -60,13 +76,14 @@ def download_data(project_name: str, species_list: Optional[str],
         print('Using default download location')
         download_location = pathlib.Path(__file__).parent.resolve()
 
-    url = f"{portal_url_to_get_data} "\
+    url = f"{portal_url_to_get_data} " \
           f"/downloader_utility_data_with_species/?" \
           f"species_list={species_list}&project_name={project_name}" \
         if species_list else \
         f"{portal_url_to_get_data}/downloader_utility_data" \
         f"/?taxonomy_filter={taxonomy_filter}" \
-        f"&data_status={data_status or ''}&experiment_type={experiment_type or ''}&project_name={project_name}"
+        f"&data_status={data_status or ''}&experiment_type=" \
+        f"{experiment_type or ''}&project_name={project_name}"
 
     try:
         response = requests.get(url)
@@ -80,7 +97,7 @@ def download_data(project_name: str, species_list: Optional[str],
                                            download_location)
     if download_list:
         print(f"Downloading {len(download_list)} files...\n")
-        downloader(download_list, processes)
+        downloader(download_list, processes, download_location)
         print('All downloads completed.')
     else:
         print('No files to download.')
@@ -89,7 +106,8 @@ def download_data(project_name: str, species_list: Optional[str],
 def generate_download_list(data_portal: List[dict], download_option: str,
                            download_location: str) -> \
         List[Tuple[str, str, str, str]]:
-    """Generate a list of files to be downloaded based on the download option."""
+    """Generate a list of files to be downloaded based on the download
+    option. """
     download_list = []
     if download_option == 'assemblies':
         for organism in data_portal:
@@ -97,8 +115,10 @@ def generate_download_list(data_portal: List[dict], download_option: str,
             for assembly in assemblies:
                 accession = assembly.get("accession")
                 version = assembly.get("version", '')
-                filename = f"{accession}.{version}.fasta.gz" if version else f"{accession}.fasta.gz"
-                url = f"{ena_url_download_fastq_file}/{accession}?download=true&gzip=true"
+                filename = f"{accession}.{version}.fasta.gz" if version else \
+                    f"{accession}.fasta.gz "
+                url = f"{ena_url_download_fastq_file}/{accession}?download" \
+                      f"=true&gzip=true "
                 download_list.append(
                     (url, filename, 'assemblies', download_location))
 
