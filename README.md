@@ -19,13 +19,13 @@ python  app/downloader-utility.py --project_name "DToL" ---phylogeny
 "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  --download_location "/Users/raheela/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
 
 * `--project_name` (Required): The name of the project (e.g., DToL, ERGA, 25 
-genomes, Canadian BioGenome Project (CBP)).
+   genomes, Canadian BioGenome Project (CBP)).
 * `--phylogeny` (Optional/Required): The name of the taxonomy for the download 
   (e.g., Chordata). Either --phylogeny or --species_list must be provided.
 * `--data_status` (Optional): The filter for data status (e.g., Biosamples - 
   Done, Raw Data - Done, Assemblies - Done, Annotation Complete - Done, Genome Notes - Done).
-* `--experiment_type` (Optional): The filter for experiment type (e.g., PacBio 
-- HiFi, Hi-C - Arima v2, Hi-C - Arima v1).
+* `--experiment_type` (Optional): The filter for experiment type (e.g., 
+  PacBio HiFi, Hi-C - Arima v2, Hi-C - Arima v1).
 * `--download_location` (Optional): The location to save the downloaded files.
 * `--download_option` (Required): The type of data to download (annotations, 
   assemblies, experiments).
@@ -46,4 +46,6 @@ Note: The `--phylogeny` and `--species_list` parameters are conditional; you nee
   
     docker run --rm -v "$PWD/download_location:/code/app/download_option" downloader-utility:latest  --clade Chordata  --experiment_type "Chromium genome" --download_option annotations --species_list "Apamea sordens,Bufo bufo" --project_name "DToL"
 
-Note: When using the Docker image, data is downloaded into the specified download_location (e.g., /Users/downloads) and the download_option should be one of (annotations, assemblies, experiments).
+Note: When using the Docker image, data is downloaded into the specified 
+`download_location (e.g., /Users/downloads)` and the `download_option` should 
+be one of `(annotations, assemblies, experiments)`.
