@@ -12,16 +12,18 @@ There are two ways to run the tool :
     
   Run script using command:
     
-    python  app/downloader-utility.py --phylogeny "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  
-    --download_location "/Users/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
+    python  app/downloader-utility.py --phylogeny "Chordata"   --data_status "Mapped Reads - Done"  
+    --experiment_type "Chromium genome" --download_location "/Users/Documents" --download_option 
+    "assemblies" --species_list "Apamea sordens,Bufo bufo"
 
 
-python  app/downloader-utility.py ---phylogeny "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type "Chromium genome"  
---download_location "/Users/Documents" --download_option "assemblies" --species_list "Apamea sordens,Bufo bufo"
+python  app/downloader-utility.py ---phylogeny "Chordata"   --data_status "Mapped Reads - Done"  --experiment_type 
+"Chromium genome" --download_location "/Users/Documents" --download_option "assemblies" --species_list 
+"Apamea sordens,Bufo bufo"
 
 * `--phylogeny` (Optional/Required) The name of the Taxnomy for the download (`eg : Dikarya`)
-* `--data_status` (Optional) The filter of data status for the download (`eg : Biosamples - Done, Raw Data - Done, Assemblies - Done,
-* Annotation Complete - Done, Genome Notes - Done`)
+* `--data_status` (Optional) The filter of data status for the download (`eg : Biosamples - Done, Raw Data - Done,
+  Assemblies - Done, Annotation Complete - Done, Genome Notes - Done`)
 * `--experiment_type` (Optional) The filter of experiment type (`eg : PacBio - HiFi,Hi-C - Arima v2,Hi-C - Arima v1`)
 * `--download_location` (Optional) The location for the download
 * `--download_option` (Required) The type of data(`annotations,assemblies,experiments`) that you want to download.
@@ -39,8 +41,10 @@ python  app/downloader-utility.py ---phylogeny "Chordata"   --data_status "Mappe
     
   Run docker image by providing parameters:
   
-    docker run --rm -v "$PWD/download_location:/code/app/download_option" downloader-utility:latest  --phylogeny Chordata  --experiment_type 
-    "Chromium genome" --download_option annotations --species_list "Apamea sordens,Bufo bufo"
+    docker run --rm -v "$PWD/download_location:/code/app/download_option" downloader-utility:latest  
+    --phylogeny Chordata  --experiment_type "Chromium genome" --download_option annotations --species_list 
+    "Apamea sordens,Bufo bufo"
 Note: 
 
-Using docker image data is downloaded into download_location e.g /Users/downloads and download_option is (`annotations,assemblies,experiments`).
+Using docker image data is downloaded into download_location e.g /Users/downloads and download_option is (`annotations,
+assemblies,experiments`).
