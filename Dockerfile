@@ -1,10 +1,10 @@
-FROM python:3.9
+FROM python:3.12
 
 #
 WORKDIR /code
 
 #
-COPY ./requirnment.txt /code/requirnment.txt
+COPY ./requirements.txt /code/requirnment.txt
 
 #
 RUN pip install --no-cache-dir --upgrade -r /code/requirnment.txt
