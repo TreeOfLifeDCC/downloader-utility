@@ -11,7 +11,7 @@ ena_url_download_fastq_file = 'https://www.ebi.ac.uk/ena/browser/api/fasta'
 portal_url_to_get_data = 'https://portal.erga-biodiversity.eu/api'
 
 
-def download_file(url, filename, directory, download_location):
+def download_file(url: str, filename: str, directory: str, download_location: str):
     """Download file using url in the specified location
    :param url:
    :param filename:
@@ -25,7 +25,7 @@ def download_file(url, filename, directory, download_location):
             f.write(chunk)
 
 
-def create_directory(filename, directory, parent_dir):
+def create_directory(filename: str, directory: str, parent_dir: str):
     """Download file using url in the specified location
 
      Keyword arguments:
@@ -45,7 +45,7 @@ def create_directory(filename, directory, parent_dir):
     return local_filename
 
 
-def downloader(download_list, processes, download_location):
+def downloader(download_list: str, processes: str, download_location: str):
     """Download data using multiprocessing.
      :param download_list:,
      :param processes,
@@ -71,7 +71,15 @@ def download_data(project_name: str, species_list: Optional[str],
                   taxonomy_filter: str, data_status: Optional[str],
                   experiment_type: Optional[str], download_option: str,
                   download_location: str, processes: int) -> None:
-    """Fetch data from the portal and initiate downloads."""
+    """Fetch data from the portal and initiate downloads.
+    project_name -- Name of the project
+    species_list -- The list of species to download.
+    Taxonomy_filter -- The name of the taxonomy for the download.
+    data_status -- The filter for data status.
+    experiment_type -- The filter for experiment type.
+    download_option-- The type of data to download.
+    download_location -- The location to save the downloaded files.
+    processes -- Number of processes."""
     if not download_location or not os.path.exists(download_location):
         print('Using default download location')
         download_location = pathlib.Path(__file__).parent.resolve()
@@ -107,7 +115,10 @@ def generate_download_list(data_portal: List[dict], download_option: str,
                            download_location: str) -> \
         List[Tuple[str, str, str, str]]:
     """Generate a list of files to be downloaded based on the download
-    option. """
+    option.
+    data_portal -- List of organisms to download data.
+    download_option-- The type of data to download.
+    download_location -- The location to save the downloaded files."""
     download_list = []
     if download_option == 'assemblies':
         for organism in data_portal:
