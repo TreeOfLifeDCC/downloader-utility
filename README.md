@@ -35,7 +35,7 @@ python  app/downloader-utility.py --project_name "DToL" ---phylogeny
 * `--species_list` (Optional/Required): The list of species to download. 
   Either --phylogeny or --species_list must be provided.
 
-Note: The `--phylogeny` and `--species_list` parameters are conditional; you need to provide one of them.
+Note: The `--phylogeny` and `--species_list` parameters are conditional you need to provide one of them.
 
 # 2. Build Docker Image: 
  Requirement:
