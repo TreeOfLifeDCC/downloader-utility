@@ -124,12 +124,13 @@ def generate_download_list(data_portal: List[dict], download_option: str,
     download_list = []
     if download_option == 'assemblies':
         for organism in data_portal:
+            species_name = organism.get('_source', {}).get("organism", []).replace(" ","_")
             assemblies = organism.get('_source', {}).get("assemblies", [])
             for assembly in assemblies:
                 accession = assembly.get("accession")
                 version = assembly.get("version", '')
-                filename = f"{accession}.{version}.fasta.gz" if version else \
-                    f"{accession}.fasta.gz "
+                filename = f"{accession}.{version}_{species_name}.fasta.gz" if version else \
+                    f"{accession}_{species_name}.fasta.gz"
                 url = f"{ena_url_download_fastq_file}/{accession}?download" \
                       f"=true&gzip=true "
                 download_list.append(
@@ -137,39 +138,58 @@ def generate_download_list(data_portal: List[dict], download_option: str,
 
     elif download_option == 'annotations':
         for organism in data_portal:
+            species_name = organism.get('_source', {}).get("organism", []).replace(" ","_")
             annotation = organism.get('_source', {}).get("annotation", [])
             for annotation_obj in annotation:
                 for key in ['GTF', 'GFF3', 'FASTA']:
+                    key_l = key.lower()
                     url = annotation_obj.get('annotation', {}).get(key)
                     if url:
-                        sub_dir = f'annotations/{key}'
-                        filename = url.split('/')[-1]
+                        sub_dir = f'annotations'
+                        accession = annotation_obj.get("accession")
+                        version = annotation_obj.get("version", '')
+                        #filename = url.split('/')[-1]
+                        filename = f"{accession}.{version}_{species_name}.{key_l}" if version else \
+                           f"{accession}_{species_name}.{key_l}"
                         download_list.append(
                             (url, filename, sub_dir, download_location))
                 for key in ['proteins', 'softmasked_genome', 'transcripts']:
                     url = annotation_obj.get(key, {}).get('FASTA')
                     if url:
-                        sub_dir = f'annotations/{key}'
-                        filename = url.split('/')[-1]
+                        sub_dir = f'annotations'
+                        accession = annotation_obj.get("accession")
+                        version = annotation_obj.get("version", '')
+                        #filename = url.split('/')[-1]
+                        filename = f"{accession}.{version}_{species_name}_{key}.fasta" if version else \
+                           f"{accession}_{species_name}_{key}.fasta"
                         download_list.append(
                             (url, filename, sub_dir, download_location))
 
     elif download_option == 'experiments':
         for organism in data_portal:
+            species_name = organism.get('_source', {}).get("organism", []).replace(" ","_")
             experiments = organism.get('_source', {}).get("experiment", [])
             for experiment in experiments:
                 for key in ['sra-ftp', 'submitted_ftp']:
                     url = experiment.get(key)
                     if url:
-                        sub_dir = f'experiments/{key}'
-                        filename = url.split('/')[-1]
+                        accession = experiment.get("accession")
+                        version = experiment.get("version", '')
+                        sub_dir = f'experiments'
+                        #filename = url.split('/')[-1]
+                        filename = f"{accession}.{version}_{species_name}.{key}" if version else \
+                           f"{accession}_{species_name}.{key}"
                         download_list.append((f'http://{url}', filename,
                                               sub_dir, download_location))
                 fastq_ftp = experiment.get('fastq_ftp', '').split(';')
                 for url in fastq_ftp:
                     if url:
+                        accession = experiment.get("accession")
+                        version = experiment.get("version", '')
                         sub_dir = 'experiments/fastqFtp'
-                        filename = url.split('/')[-1]
+                        #filename = url.split('/')[-1]
+                        filename = f"{accession}.{version}_{species_name}.{key}" if version else \
+                           f"{accession}_{species_name}.{key}"
                         download_list.append((f'http://{url}', filename,
                                               sub_dir, download_location))
 
