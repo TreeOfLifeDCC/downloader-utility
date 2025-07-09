@@ -37,7 +37,7 @@ def create_directory(filename: str, directory: str, parent_dir: str):
     try:
         os.makedirs(path, exist_ok=True)
     except OSError as error:
-        print("Directory '%s' can not be created" % directory)
+        print(f"Directory '{path}' can not be created: {error}")
     if filename:
         local_filename = os.path.join(path, filename)
     else:
@@ -125,6 +125,7 @@ def generate_download_list(data_portal: List[dict], download_option: str,
     if download_option == 'assemblies':
         for organism in data_portal:
             assemblies = organism.get('_source', {}).get("assemblies", [])
+            species = organism.get('_source', {}).get("organism")
             for assembly in assemblies:
                 accession = assembly.get("accession")
                 version = assembly.get("version", '')
@@ -133,23 +134,24 @@ def generate_download_list(data_portal: List[dict], download_option: str,
                 url = f"{ena_url_download_fastq_file}/{accession}?download" \
                       f"=true&gzip=true "
                 download_list.append(
-                    (url, filename, 'assemblies', download_location))
+                    (url, filename, f'assemblies/{species}', download_location))
 
     elif download_option == 'annotations':
         for organism in data_portal:
+            species = organism.get('_source', {}).get("organism")
             annotation = organism.get('_source', {}).get("annotation", [])
             for annotation_obj in annotation:
                 for key in ['GTF', 'GFF3', 'FASTA']:
                     url = annotation_obj.get('annotation', {}).get(key)
                     if url:
-                        sub_dir = f'annotations/{key}'
+                        sub_dir = f'annotations/{species}/{key}'
                         filename = url.split('/')[-1]
                         download_list.append(
                             (url, filename, sub_dir, download_location))
                 for key in ['proteins', 'softmasked_genome', 'transcripts']:
                     url = annotation_obj.get(key, {}).get('FASTA')
                     if url:
-                        sub_dir = f'annotations/{key}'
+                        sub_dir = f'annotations/{species}/{key}'
                         filename = url.split('/')[-1]
                         download_list.append(
                             (url, filename, sub_dir, download_location))
@@ -157,18 +159,19 @@ def generate_download_list(data_portal: List[dict], download_option: str,
     elif download_option == 'experiments':
         for organism in data_portal:
             experiments = organism.get('_source', {}).get("experiment", [])
+            species = organism.get('_source', {}).get("organism")
             for experiment in experiments:
                 for key in ['sra-ftp', 'submitted_ftp']:
                     url = experiment.get(key)
                     if url:
-                        sub_dir = f'experiments/{key}'
+                        sub_dir = f'experiments/{species}/{key}'
                         filename = url.split('/')[-1]
                         download_list.append((f'http://{url}', filename,
                                               sub_dir, download_location))
                 fastq_ftp = experiment.get('fastq_ftp', '').split(';')
                 for url in fastq_ftp:
                     if url:
-                        sub_dir = 'experiments/fastqFtp'
+                        sub_dir = f'experiments/{species}/fastqFtp'
                         filename = url.split('/')[-1]
                         download_list.append((f'http://{url}', filename,
                                               sub_dir, download_location))
