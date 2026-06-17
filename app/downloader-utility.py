@@ -19,29 +19,60 @@ def download_file(url: str, filename: str, directory: str, download_location: st
    :param download_location:
    """
     abs_path = create_directory(filename, directory, download_location)
-    with requests.get(url, stream=True) as r, open(abs_path, "wb") as f:
+    if abs_path is None:
+        return
+    with requests.get(url, stream=True, timeout=60) as r, \
+            open(abs_path, "wb") as f:
         print('Download Started !! ' + url)
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
 
 
+def safe_path_component(name: str) -> str:
+    """Reduce an untrusted value to a single, safe path component.
+
+    Strips any directory separators / parent references so that values
+    taken from the remote manifest cannot traverse outside the intended
+    download directory.
+    name -- The untrusted candidate path component."""
+    # basename drops any leading directory parts and absolute-path roots;
+    # the replace neutralises residual parent references.
+    component = os.path.basename(str(name).replace("\\", "/").rstrip("/"))
+    component = component.replace("..", "_").strip()
+    return component or "unknown"
+
+
 def create_directory(filename: str, directory: str, parent_dir: str):
-    """Download file using url in the specified location
+    """Build the absolute download path, keeping it inside parent_dir.
 
      Keyword arguments:
      filename -- The name of the File
      directory -- Directory name which you want to create
      parent_dir --  The parent directory where you want to create
     """
-    path = os.path.join(parent_dir, directory)
+    # Sanitise every untrusted segment, then verify the resolved path is
+    # still contained within parent_dir before any directory is created.
+    safe_directory = os.path.join(
+        *[safe_path_component(part) for part in directory.split('/') if part])
+    safe_filename = safe_path_component(filename)
+
+    base = os.path.realpath(parent_dir)
+    path = os.path.realpath(os.path.join(base, safe_directory))
+    if path != base and not path.startswith(base + os.sep):
+        print(f"Refusing to write outside download location: {path}")
+        return None
+
+    local_filename = os.path.join(path, safe_filename)
+    if os.path.realpath(local_filename) != local_filename and \
+            not os.path.realpath(local_filename).startswith(base + os.sep):
+        print(f"Refusing to write outside download location: {local_filename}")
+        return None
+
     try:
         os.makedirs(path, exist_ok=True)
     except OSError as error:
         print(f"Directory '{path}' can not be created: {error}")
-    if filename:
-        local_filename = os.path.join(path, filename)
-    else:
-        local_filename = os.path.join(path, filename)
+        return None
     return local_filename
 
 
@@ -84,19 +115,24 @@ def download_data(project_name: str, species_list: Optional[str],
         print('Using default download location')
         download_location = pathlib.Path(__file__).parent.resolve()
 
-    url = f"{portal_url_to_get_data}" \
-          f"/downloader_utility_data_with_species/?" \
-          f"species_list={species_list}&project_name=" \
-          f"{convert_project_name(project_name)}" \
-        if species_list else \
-        f"{portal_url_to_get_data}/downloader_utility_data" \
-        f"/?taxonomy_filter={taxonomy_filter}" \
-        f"&data_status={data_status or ''}&experiment_type=" \
-        f"{experiment_type or ''}&project_name=" \
-        f"{convert_project_name(project_name)}"
+    if species_list:
+        url = f"{portal_url_to_get_data}" \
+              f"/downloader_utility_data_with_species/"
+        params = {
+            "species_list": species_list,
+            "project_name": convert_project_name(project_name),
+        }
+    else:
+        url = f"{portal_url_to_get_data}/downloader_utility_data/"
+        params = {
+            "taxonomy_filter": taxonomy_filter,
+            "data_status": data_status or '',
+            "experiment_type": experiment_type or '',
+            "project_name": convert_project_name(project_name),
+        }
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, params=params, timeout=60)
         response.raise_for_status()
         data_portal = response.json()
     except requests.RequestException as e:
@@ -166,17 +202,29 @@ def generate_download_list(data_portal: List[dict], download_option: str,
                     if url:
                         sub_dir = f'experiments/{species}/{key}'
                         filename = url.split('/')[-1]
-                        download_list.append((f'http://{url}', filename,
+                        download_list.append((to_https(url), filename,
                                               sub_dir, download_location))
                 fastq_ftp = experiment.get('fastq_ftp', '').split(';')
                 for url in fastq_ftp:
                     if url:
                         sub_dir = f'experiments/{species}/fastqFtp'
                         filename = url.split('/')[-1]
-                        download_list.append((f'http://{url}', filename,
+                        download_list.append((to_https(url), filename,
                                               sub_dir, download_location))
 
     return download_list
+
+
+def to_https(url: str) -> str:
+    """Normalise a manifest-supplied location to an https:// URL.
+
+    The ENA hosts referenced by the portal serve the same content over
+    TLS; forcing https avoids the cleartext download/MITM of file content.
+    url -- The (possibly scheme-less or ftp/http) location string."""
+    for scheme in ('https://', 'http://', 'ftp://'):
+        if url.startswith(scheme):
+            return 'https://' + url[len(scheme):]
+    return 'https://' + url
 
 
 if __name__ == "__main__":
